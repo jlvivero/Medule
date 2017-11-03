@@ -11,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 
 public class MedicineName extends Fragment implements View.OnClickListener{
+    private EditText name;
+    private EditText hours;
     View view;
     OnFormIntroducedListener mCallback;
     public interface OnFormIntroducedListener {
@@ -27,6 +30,8 @@ public class MedicineName extends Fragment implements View.OnClickListener{
         buttonAccept.setOnClickListener(this);
         Button buttonCancel = view.findViewById(R.id.delete);
         buttonCancel.setOnClickListener(this);
+        name = view.findViewById(R.id.medName);
+        hours = view.findViewById(R.id.Time);
         return view;
     }
 
@@ -53,10 +58,9 @@ public class MedicineName extends Fragment implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.add:
                 Log.d("fragments", "I did select the right button");
-                //TODO: add real values to the form
                 form = new MedicineForm();
-                form.setHours(8);
-                form.setName("modafinil");
+                form.setName(name.getText().toString());
+                form.setHours(Integer.parseInt(hours.getText().toString()));
                 form.setError(0);
                 mCallback.sent(form);
                 break;
