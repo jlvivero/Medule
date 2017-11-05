@@ -8,6 +8,7 @@ public class MedicineForm {
     private int error;
     private String name;
     private int hours;
+    private int id;
     public MedicineForm() {
         this.error = 1;
         this.name = "nothing";
@@ -36,5 +37,14 @@ public class MedicineForm {
 
     public void setHours(int n) {
         this.hours = n;
+    }
+
+    public void setId(int n) {this.id = n;}
+
+    public int getId(){ return this.id;}
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
