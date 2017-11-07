@@ -13,14 +13,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 public class MedicineName extends Fragment implements View.OnClickListener{
+
     private EditText name;
     private EditText hours;
     View view;
     OnFormIntroducedListener mCallback;
+
     public interface OnFormIntroducedListener {
-        public void sent(MedicineForm form);
+        void sent(MedicineForm form);
+    }
+
+    public static MedicineName newInstance(int id) {
+        MedicineName form = new MedicineName();
+        Bundle args = new Bundle();
+        args.putInt("id", id);
+        form.setArguments(args);
+        return form;
     }
 
     @Override
@@ -38,7 +47,7 @@ public class MedicineName extends Fragment implements View.OnClickListener{
     @Override
     public void onStart() {
         super.onStart();
-        //do nothing cause nothing needs to be done
+        //bundle should have the last id
     }
 
     @Override
@@ -62,6 +71,7 @@ public class MedicineName extends Fragment implements View.OnClickListener{
                 form.setName(name.getText().toString());
                 form.setHours(Integer.parseInt(hours.getText().toString()));
                 form.setError(0);
+                form.setId(getArguments().getInt("id") + 1);
                 mCallback.sent(form);
                 break;
             case R.id.delete:

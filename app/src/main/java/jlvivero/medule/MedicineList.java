@@ -17,8 +17,8 @@ import java.util.ArrayList;
  * Created by joslu on 10/31/2017.
  */
 
-//TODO: display the listview properly by only showing the name attribute in the objects
 public class MedicineList extends Fragment implements ListView.OnItemClickListener{
+
     View view;
     private ArrayList<MedicineForm> medicines = new ArrayList<>();
     private ArrayAdapter<MedicineForm> adapter;
@@ -29,13 +29,16 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         MedicineForm item;
         item = adapter.getItem(i);
         if(item != null){
-            item.setError(0);
-            mCallback.edit(item);
+            mCallback.edit(0,i);
         }
+        else {
+            mCallback.edit(1,i);
+        }
+
     }
 
     public interface ModifyValueListener {
-        void edit(MedicineForm structure);
+        void edit(int error, int position);
     }
     public static MedicineList newInstance(ArrayList<MedicineForm> lst) {
         MedicineList medicineList = new MedicineList();

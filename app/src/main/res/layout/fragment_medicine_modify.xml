@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="jlvivero.medule.MedicineModify">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+
+        <Button
+            android:id="@+id/take"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_bright"
+            android:layout_margin="10dp"
+            android:text="@string/take_medicine" />
+
+        <Button
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_bright"
+            android:layout_margin="10dp"
+            android:text="@string/change_time" />
+
+        <Button
+            android:id="@+id/rename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_bright"
+            android:layout_margin="10dp"
+            android:text="@string/change_name" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:layout_margin="10dp"
+            android:text="@string/delete" />
+
+        <TextView
+            android:id="@+id/name_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/change_name"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/time_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/change_time"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/textName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="false"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/textHours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/delete_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_question"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/holo_blue_bright"
+            android:text="Confirm"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</FrameLayout>

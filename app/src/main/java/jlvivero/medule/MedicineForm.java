@@ -1,5 +1,7 @@
 package jlvivero.medule;
 
+import static java.lang.String.*;
+
 /**
  * Created by joslu on 10/31/2017.
  */
@@ -45,6 +47,7 @@ public class MedicineForm {
 
     @Override
     public String toString() {
-        return this.name;
+        return format("%s %n Time between dosages: %d", this.name, this.hours);
+        //return this.name + "  | Time between dosages: " + this.hours;
     }
 }
