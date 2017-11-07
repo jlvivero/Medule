@@ -15,13 +15,14 @@ import android.widget.EditText;
 
 public class MedicineName extends Fragment implements View.OnClickListener{
 
+    View view;
     private EditText name;
     private EditText hours;
-    View view;
     OnFormIntroducedListener mCallback;
 
     public interface OnFormIntroducedListener {
         void sent(MedicineForm form);
+        void cancel();
     }
 
     public static MedicineName newInstance(int id) {
@@ -35,19 +36,21 @@ public class MedicineName extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_medicine_name, container, false);
+
+        //views that are used inside the fragment
         Button buttonAccept = view.findViewById(R.id.add);
-        buttonAccept.setOnClickListener(this);
         Button buttonCancel = view.findViewById(R.id.delete);
-        buttonCancel.setOnClickListener(this);
         name = view.findViewById(R.id.medName);
         hours = view.findViewById(R.id.Time);
+        buttonAccept.setOnClickListener(this);
+        buttonCancel.setOnClickListener(this);
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        //bundle should have the last id
     }
 
     @Override
@@ -62,22 +65,21 @@ public class MedicineName extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        Log.d("fragments", "Did I even get here");
         MedicineForm form;
         switch (v.getId()) {
+            //adds medicine
             case R.id.add:
-                Log.d("fragments", "I did select the right button");
                 form = new MedicineForm();
                 form.setName(name.getText().toString());
                 form.setHours(Integer.parseInt(hours.getText().toString()));
+                //TODO: remove setError value from MedicineForm and anything related
                 form.setError(0);
                 form.setId(getArguments().getInt("id") + 1);
                 mCallback.sent(form);
                 break;
+            //cancels and returns to normal
             case R.id.delete:
-                Log.d("fragments", "I selected the wrong button");
-                form = new MedicineForm();
-                mCallback.sent(form);
+                mCallback.cancel();
                 break;
             default:
                 Log.d("fragments", "I don't know what button I clicked");

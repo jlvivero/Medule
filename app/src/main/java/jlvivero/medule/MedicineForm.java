@@ -47,7 +47,6 @@ public class MedicineForm {
 
     @Override
     public String toString() {
-        return format("%s %n Time between dosages: %d", this.name, this.hours);
-        //return this.name + "  | Time between dosages: " + this.hours;
+        return format("%s %n Time between dosages: %d Hours", this.name, this.hours);
     }
 }

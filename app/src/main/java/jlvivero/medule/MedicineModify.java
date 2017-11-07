@@ -14,16 +14,18 @@ import android.widget.TextView;
 /**
  * Created by joslu on 11/6/2017.
  */
+//TODO: set default values of the edit texts to the current values of the medicine
 public class MedicineModify extends Fragment implements View.OnClickListener{
 
     View view;
-    MedicineForm modify;
-    CallbackValueListener mCallback;
+    private MedicineForm modify;
     private Button confirm;
     private int lastPress;
+    CallbackValueListener mCallback;
 
     public interface CallbackValueListener {
-        void replaceValues(MedicineForm values, int position, boolean delete);
+        void replaceValues(MedicineForm values, int position);
+        void deleteValue(int position);
     }
 
     public static MedicineModify newInstance(MedicineForm pack, int position) {
@@ -32,12 +34,13 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
             return instance;
         }
         Bundle args = new Bundle();
+
         String name;
-        int id;
-        int hours;
+        int id, hours;
         id = pack.getId();
         hours = pack.getHours();
         name = pack.getName();
+
         args.putInt("id", id);
         args.putString("name", name);
         args.putInt("hours", hours);
@@ -49,12 +52,13 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_medicine_modify, container, false);
+
+        //views that are used inside the fragment
+        confirm = view.findViewById(R.id.confirm);
         Button takeMeds = view.findViewById(R.id.take);
         Button changeTime = view.findViewById(R.id.time);
         Button changeName = view.findViewById(R.id.rename);
         Button delete = view.findViewById(R.id.delete);
-        confirm = view.findViewById(R.id.confirm);
-
         takeMeds.setOnClickListener(this);
         changeTime.setOnClickListener(this);
         changeName.setOnClickListener(this);
@@ -63,7 +67,6 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
 
         return view;
     }
-
 
     @Override
     public void onStart() {
@@ -80,14 +83,13 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         }
     }
 
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mCallback = (CallbackValueListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + "must implement CallbackListener");
+            throw new ClassCastException(activity.toString() + "must implement CallbackValueListener");
         }
     }
 
@@ -98,13 +100,15 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         EditText editHours = view.findViewById(R.id.textHours);
         EditText editName = view.findViewById(R.id.textName);
         TextView deleteLabel = view.findViewById(R.id.delete_label);
+
         switch (v.getId()) {
-            case R.id.take:
+            case R.id.take: //medicine taken
                 //TODO: this shoudl be implemented along with the timers
                 Log.d("pending", "not implemented");
                 lastPress = R.id.take;
                 break;
-            case R.id.time:
+
+            case R.id.time: //changes the hours between dosage value
                 deleteLabel.setVisibility(View.GONE);
                 nameLabel.setVisibility(View.GONE);
                 editName.setVisibility(View.GONE);
@@ -113,7 +117,8 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
                 confirm.setVisibility(View.VISIBLE);
                 lastPress = R.id.time;
                 break;
-            case R.id.rename:
+
+            case R.id.rename: //changes the naem of the medicine
                 deleteLabel.setVisibility(View.GONE);
                 hoursLabel.setVisibility(View.GONE);
                 editHours.setVisibility(View.GONE);
@@ -122,7 +127,8 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
                 confirm.setVisibility(View.VISIBLE);
                 lastPress = R.id.rename;
                 break;
-            case R.id.delete:
+
+            case R.id.delete: //deletes the medicine
                 hoursLabel.setVisibility(View.GONE);
                 editHours.setVisibility(View.GONE);
                 nameLabel.setVisibility(View.GONE);
@@ -131,25 +137,27 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
                 confirm.setVisibility(View.VISIBLE);
                 lastPress = R.id.delete;
                 break;
-            case R.id.confirm:
+            case R.id.confirm: //confirm button for the previous options
                 switch (lastPress) {
                     case R.id.take:
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"), false);
+                        //TODO: might consider implementing a mcallback.nothing method
+                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
                         //TODO: call timer to start using the time from modify
                         break;
                     case R.id.time:
                         Log.d("callbacks", "I got this far");
                         modify.setHours(Integer.parseInt(editHours.getText().toString()));
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"), false);
+                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
                         break;
                     case R.id.rename:
                         modify.setName(editName.getText().toString());
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"), false);
+                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
                         break;
                     case R.id.delete:
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"), true);
+                        mCallback.deleteValue(getArguments().getInt("pos"));
+                        break;
                 }
-
+                break;
             default:
                 Log.d("fragments", "I don't know what button I clicked");
 

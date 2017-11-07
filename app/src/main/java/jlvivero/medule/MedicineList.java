@@ -24,22 +24,10 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     private ArrayAdapter<MedicineForm> adapter;
     ModifyValueListener mCallback;
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        MedicineForm item;
-        item = adapter.getItem(i);
-        if(item != null){
-            mCallback.edit(0,i);
-        }
-        else {
-            mCallback.edit(1,i);
-        }
-
-    }
-
     public interface ModifyValueListener {
         void edit(int error, int position);
     }
+
     public static MedicineList newInstance(ArrayList<MedicineForm> lst) {
         MedicineList medicineList = new MedicineList();
         if(lst == null) {
@@ -64,16 +52,14 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.fragment_medicine_list, container, false);
-        Log.d("callback", "who goes first");
-        ListView list = view.findViewById(R.id.meds);
+
+        //views that are used inside the fragment
         adapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, medicines);
+        ListView list = view.findViewById(R.id.meds);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
-        return view;
-    }
 
-    private boolean accepted(ArrayList<String> name, ArrayList<Integer> hours, ArrayList<Integer> id) {
-        return name != null && hours != null && id != null && name.size() == hours.size() && hours.size() == id.size();
+        return view;
     }
 
     @Override
@@ -81,8 +67,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         super.onStart();
         try {
             ArrayList<String> name;
-            ArrayList<Integer> id;
-            ArrayList<Integer> hours;
+            ArrayList<Integer> id, hours;
             name = getArguments().getStringArrayList("name");
             id = getArguments().getIntegerArrayList("id");
             hours = getArguments().getIntegerArrayList("hours");
@@ -103,18 +88,35 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         }
     }
 
-
-    public ArrayList<MedicineForm> getMedicines() {
-        return medicines;
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mCallback = (ModifyValueListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + "must implement OnListIntroducedListener");
+            throw new ClassCastException(activity.toString() + "must implement ModifyValueListener");
         }
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        MedicineForm item;
+        item = adapter.getItem(i);
+        if(item != null){
+            mCallback.edit(0,i);
+        }
+        else {
+            mCallback.edit(1,i);
+        }
+
+    }
+
+    private boolean accepted(ArrayList<String> name, ArrayList<Integer> hours, ArrayList<Integer> id) {
+        return name != null && hours != null && id != null && name.size() == hours.size() && hours.size() == id.size();
+    }
+
+    public ArrayList<MedicineForm> getMedicines() {
+        return medicines;
+    }
+
 }
