@@ -14,7 +14,6 @@ import android.widget.TextView;
 /**
  * Created by joslu on 11/6/2017.
  */
-//TODO: set default values of the edit texts to the current values of the medicine
 public class MedicineModify extends Fragment implements View.OnClickListener{
 
     View view;
@@ -26,6 +25,7 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
     public interface CallbackValueListener {
         void replaceValues(MedicineForm values, int position);
         void deleteValue(int position);
+        void nothing();
     }
 
     public static MedicineModify newInstance(MedicineForm pack, int position) {
@@ -100,12 +100,15 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         EditText editHours = view.findViewById(R.id.textHours);
         EditText editName = view.findViewById(R.id.textName);
         TextView deleteLabel = view.findViewById(R.id.delete_label);
+        editHours.setHint(String.valueOf(modify.getHours()));
+        editName.setHint(modify.getName());
 
         switch (v.getId()) {
             case R.id.take: //medicine taken
                 //TODO: this shoudl be implemented along with the timers
                 Log.d("pending", "not implemented");
-                lastPress = R.id.take;
+                //TODO: call timer to start using the time from modify
+                mCallback.nothing();
                 break;
 
             case R.id.time: //changes the hours between dosage value
@@ -139,19 +142,24 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
                 break;
             case R.id.confirm: //confirm button for the previous options
                 switch (lastPress) {
-                    case R.id.take:
-                        //TODO: might consider implementing a mcallback.nothing method
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
-                        //TODO: call timer to start using the time from modify
-                        break;
                     case R.id.time:
                         Log.d("callbacks", "I got this far");
-                        modify.setHours(Integer.parseInt(editHours.getText().toString()));
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        if(editHours.getText().toString().equals("")) {
+                            mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        }
+                        else {
+                            modify.setHours(Integer.parseInt(editHours.getText().toString()));
+                            mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        }
                         break;
                     case R.id.rename:
-                        modify.setName(editName.getText().toString());
-                        mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        if(editName.getText().toString().equals("")){
+                            mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        }
+                        else {
+                            modify.setName(editName.getText().toString());
+                            mCallback.replaceValues(modify, getArguments().getInt("pos"));
+                        }
                         break;
                     case R.id.delete:
                         mCallback.deleteValue(getArguments().getInt("pos"));

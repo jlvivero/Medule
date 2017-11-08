@@ -1,9 +1,12 @@
 package jlvivero.medule;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -11,9 +14,10 @@ import java.util.ArrayList;
 //TODO: filter by pending
 //TODO: sort by next dose
 //TODO: take all button for all pending medicines
-//TODO: stop back button from closing the app
+//TODO: add permanence to the medicines
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
+    private int state;
     private int modifyPos;
     private ArrayList<MedicineForm> list = new ArrayList<>();
     private MedicineList meds;
@@ -44,6 +48,29 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(Integer.parseInt(Build.VERSION.SDK) > 5 && keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDownCalled");
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("CDA", "onBackPressedCalled");
+        //if state is already 0, should exit the app
+        if(state != 0){
+            changeState(0);
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
+
+
     //obtains the list of medicines from the list fragment so that new stuff can be added
     public void passData(ArrayList<MedicineForm> data) {
         list = new ArrayList<>();
@@ -51,6 +78,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void changeState(int i) {
+        state = i;
         switch (i) {
             case 0://show medicine list fragment
                 meds = MedicineList.newInstance(list);
@@ -122,6 +150,10 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     public void deleteValue(int position) {
         //TODO: once timers are implemented call for the deletion of the id before deleting from list
         list.remove(position);
+        changeState(0);
+    }
+
+    public void nothing() {
         changeState(0);
     }
 }
