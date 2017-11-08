@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+//TODO: create a top menu
 //TODO: filter by pending
 //TODO: sort by next dose
 //TODO: take all button for all pending medicines
-//TODO: change the star button for a + button and make sure the size is correct
+//TODO: stop back button from closing the app
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
     private int modifyPos;
