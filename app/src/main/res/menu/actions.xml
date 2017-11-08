@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:colorBackground="?attr/colorPrimary">
+
+    <item
+        android:id="@+id/add_all"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="@string/take_all_meds"/>
+    <item
+        android:id="@+id/sort_by"
+        android:icon="@android:drawable/sym_contact_card"
+        android:title="@string/sort_by"/>
+
+</menu>

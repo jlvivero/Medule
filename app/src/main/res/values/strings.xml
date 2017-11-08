@@ -13,4 +13,7 @@
     <string name="medicine_name">Medicine name</string>
     <string name="hours_between_doses">Hours between doses</string>
     <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="medule">Medule</string>
+    <string name="take_all_meds">Take all meds</string>
+    <string name="sort_by">Sort By</string>
 </resources>

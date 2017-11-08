@@ -5,15 +5,17 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
-//TODO: create a top menu
 //TODO: filter by pending
 //TODO: sort by next dose
-//TODO: take all button for all pending medicines
 //TODO: add permanence to the medicines
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar mytoolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(mytoolbar);
 
         //TODO: once a databse is set pull the values before making the new instance
         //list of medicines fragment
@@ -67,6 +72,26 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         }
         else{
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_all:
+                //TODO: implement a take all method once timers are made
+                return true;
+            case R.id.sort_by:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
