@@ -1,5 +1,8 @@
 package jlvivero.medule;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import jlvivero.medule.models.Database;
+import jlvivero.medule.models.Medicine;
+
 //TODO: filter by pending
 //TODO: sort by next dose
-//TODO: add permanence to the medicines
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
+    private Database db;
     private int state;
     private int modifyPos;
     private ArrayList<MedicineForm> list = new ArrayList<>();
@@ -33,9 +41,19 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         Toolbar mytoolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(mytoolbar);
 
-        //TODO: once a databse is set pull the values before making the new instance
+        //TODO: consider making a handler class for db
+        //test code for database
+        //DatabaseInitializer.populateAsync(Database.getDatabase(this));
+        db = Database.getDatabase(this);
+        List<Medicine> templist = db.medicineDao().getAll();
+        list = new ArrayList<>();
+        for (Medicine lst: templist) {
+            lst.converting();
+            list.add(lst.getForm());
+        }
+
         //list of medicines fragment
-        meds = MedicineList.newInstance(null);
+        meds = MedicineList.newInstance(list);
         transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, meds).commit();
 
@@ -139,7 +157,12 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     //from medicineName fragment
     public void sent(MedicineForm callback) {
         if(callback.hasError() == 0)
+        {
+            Medicine med = new Medicine();
+            med.setForm(callback);
             list.add(callback);
+            db.medicineDao().insertAll(med);
+        }
         changeState(0);
     }
 
@@ -159,6 +182,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
     //from medicineModify fragment
     public void replaceValues(MedicineForm callback, int position) {
+        //TODO: replace on database as well
         if(list.get(position).getId() == callback.getId()){
             list.get(position).setHours(callback.getHours());
             list.get(position).setName(callback.getName());
@@ -173,6 +197,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void deleteValue(int position) {
+        //TODO: delete from database as well
         //TODO: once timers are implemented call for the deletion of the id before deleting from list
         list.remove(position);
         changeState(0);
