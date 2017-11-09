@@ -1,6 +1,11 @@
 package jlvivero.medule;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import jlvivero.medule.timers.AlarmReceiver;
+
 /**
  * Created by joslu on 11/6/2017.
  */
 public class MedicineModify extends Fragment implements View.OnClickListener{
-
     View view;
     private MedicineForm modify;
     private Button confirm;
@@ -26,6 +32,7 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         void replaceValues(MedicineForm values, int position);
         void deleteValue(int position);
         void nothing();
+        void alarm(int pos);
     }
 
     public static MedicineModify newInstance(MedicineForm pack, int position) {
@@ -105,10 +112,8 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
 
         switch (v.getId()) {
             case R.id.take: //medicine taken
-                //TODO: this shoudl be implemented along with the timers
                 Log.d("pending", "not implemented");
-                //TODO: call timer to start using the time from modify
-                mCallback.nothing();
+                mCallback.alarm(getArguments().getInt("pos"));
                 break;
 
             case R.id.time: //changes the hours between dosage value

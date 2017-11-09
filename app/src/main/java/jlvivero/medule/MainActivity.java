@@ -1,10 +1,11 @@
 package jlvivero.medule;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.migration.Migration;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,12 +22,24 @@ import java.util.List;
 
 import jlvivero.medule.models.Database;
 import jlvivero.medule.models.Medicine;
+import jlvivero.medule.timers.AlarmReceiver;
 
+
+//TODO: make text bigger overall
+//TODO: design decision, maybe add an option to change the size of the font
 //TODO: filter by pending
 //TODO: sort by next dose
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
+    //persistance variables
     private Database db;
+
+    //timer variables
+    private AlarmManager alarm;
+    private PendingIntent alarmIntent;
+    private ArrayList<PendingIntent> intentArray;
+
+    //information processing variables
     private int state;
     private int modifyPos;
     private ArrayList<MedicineForm> list = new ArrayList<>();
@@ -43,7 +56,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
         //TODO: consider making a handler class for db
         //test code for database
-        //DatabaseInitializer.populateAsync(Database.getDatabase(this));
         db = Database.getDatabase(this);
         List<Medicine> templist = db.medicineDao().getAll();
         list = new ArrayList<>();
@@ -182,8 +194,10 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
     //from medicineModify fragment
     public void replaceValues(MedicineForm callback, int position) {
-        //TODO: replace on database as well
         if(list.get(position).getId() == callback.getId()){
+            Medicine med = new Medicine();
+            med.setForm(callback);
+            db.medicineDao().updateMed(med);
             list.get(position).setHours(callback.getHours());
             list.get(position).setName(callback.getName());
             changeState(0);
@@ -197,13 +211,31 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void deleteValue(int position) {
-        //TODO: delete from database as well
-        //TODO: once timers are implemented call for the deletion of the id before deleting from list
+        Medicine med = new Medicine();
+        med.setForm(list.get(position));
+        db.medicineDao().delete(med);
         list.remove(position);
         changeState(0);
     }
 
     public void nothing() {
         changeState(0);
+    }
+    public void alarm(int pos) {
+        //TODO: design decision, probably need to add intent id to database or a data structure that related med id with intent
+        //TODO: check how you can delete alarms after closing the app im thinking recreating the alarmintent with the code
+        int time = list.get(pos).getHours();
+        int code = list.get(pos).getId();
+        //dummy code for alarm timers
+        Log.d("alarm", "just activated the alarm");
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
+        //this is set to minutes instead of hours for testing purposes
+        //TODO: change time for time * 60 for it to be hours
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
+        intentArray.add(alarmIntent);
+        changeState(0);
+        //TODO: maybe add a message for changestate saying medicine taken was successful
     }
 }

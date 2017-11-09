@@ -11,6 +11,7 @@ import jlvivero.medule.MedicineForm;
  * Created by joslu on 11/9/2017.
  */
 //TODO: consider removing all the instances of MedicineForm and replacing them with medicine class
+//TODO: design decision, make a wrapper for database managment so that you can transform from medicineform to medicine or remove medicine form
 @Entity
 public class Medicine {
     @PrimaryKey
