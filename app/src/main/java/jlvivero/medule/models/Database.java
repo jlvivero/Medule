@@ -9,14 +9,14 @@ import android.content.Context;
  * Created by joslu on 11/9/2017.
  */
 
-@android.arch.persistence.room.Database(entities = Medicine.class, version = 1)
+@android.arch.persistence.room.Database(entities = Medicine.class, version = 2)
 public abstract class Database extends RoomDatabase{
     //MedicineDao is a classa nnotated with @dao
     private static Database INSTANCE;
     public abstract  MedicineDao medicineDao();
     public static Database getDatabase(Context context) {
         if(INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), Database.class, "medule").allowMainThreadQueries().build();
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), Database.class, "medule").allowMainThreadQueries().fallbackToDestructiveMigration().build();
         }
         return INSTANCE;
     }

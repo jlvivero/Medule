@@ -23,6 +23,9 @@ public class Medicine {
     @ColumnInfo(name = "dosage_time")
     private int hours;
 
+    @ColumnInfo(name = "due")
+    private boolean due;
+
     @Ignore
     MedicineForm convert;
 
@@ -46,11 +49,20 @@ public class Medicine {
         this.id = id;
     }
 
+    public void setDue(boolean due) {
+        this.due = due;
+    }
+
+    public boolean getDue(){
+        return this.due;
+    }
+
     public void converting(){
         this.convert = new MedicineForm();
         this.convert.setId(this.id);
         this.convert.setHours(this.hours);
         this.convert.setName(this.medName);
+        this.convert.setDue(this.due);
     }
 
     public MedicineForm getForm() {
@@ -62,5 +74,6 @@ public class Medicine {
         this.medName = this.convert.getName();
         this.id = this.convert.getId();
         this.hours = this.convert.getHours();
+        this.due = this.convert.isDue();
     }
 }

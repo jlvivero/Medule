@@ -18,6 +18,9 @@ public interface MedicineDao {
     @Query("SELECT * FROM medicine")
     List<Medicine> getAll();
 
+    @Query("SELECT * FROM medicine WHERE id IS :id")
+    Medicine get(int id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Medicine... medicines);
 

@@ -2,6 +2,7 @@ package jlvivero.medule;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.TaskStackBuilder;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     private MedicineList meds;
     private android.support.v4.app.FragmentTransaction transaction;
 
+    //TODO: update information from list when you slide up
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +61,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         Toolbar mytoolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(mytoolbar);
 
-        //notification code
-        createNotification();
+
 
         FloatingActionButton floatButton =  findViewById(R.id.floatingActionButton);
 
@@ -86,7 +87,21 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         list = new ArrayList<>();
         for (Medicine lst: templist) {
             lst.converting();
+            if(lst.getDue()){
+                Log.d("bug", "is due");
+            }
+            else{
+                Log.d("bug", "is not due");
+            }
             list.add(lst.getForm());
+        }
+        for(MedicineForm lst: list) {
+            if(lst.isDue()) {
+                Log.d("bug", "real due");
+            }
+            else {
+                Log.d("bug", "real not due");
+            }
         }
         //list of medicines fragment
         meds = MedicineList.newInstance(list);
@@ -94,32 +109,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         transaction.replace(R.id.fragment_container, meds).commit();
     }
 
-    public void createNotification(){
-        //change this to a different method that has the annotaiton @TargetAPI
-        NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //the id of the channel
-        String id = "medule_reminder";
-        //the user-visible name of the channel
-        CharSequence name = getString(R.string.channel_name);
-        //the user-visible description of the channel
-        String description = getString(R.string.channel_description);
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        createChannel(notif, id, name, importance, description);
 
-        AlarmReceiver.getNotificationInfo(notif, id);
-
-
-    }
-
-    @TargetApi(26)
-    public void createChannel(NotificationManager notif, String id, CharSequence name, int importance, String description) {
-        NotificationChannel channel = new NotificationChannel(id, name, importance);
-        channel.setDescription(description);
-        channel.enableLights(true);
-        channel.enableVibration(true);
-        notif.createNotificationChannel(channel);
-        AlarmReceiver.getChannel(channel);
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -271,11 +261,19 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
     public void alarm(int pos) {
         //TODO: design decision, probably need to add intent id to database or a data structure that related med id with inten
+
         int time = list.get(pos).getHours();
         int code = list.get(pos).getId();
+
+        list.get(pos).setDue(false);
+        Medicine med = new Medicine();
+        med.setForm(list.get(pos));
+        db.medicineDao().updateMed(med);
+
         //dummy code for alarm timers
         Log.d("alarm", "just activated the alarm");
         Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("id", code);
         alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
 
@@ -289,4 +287,5 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         changeState(0);
         //TODO: maybe add a message for changestate saying medicine taken was successful
     }
+
 }

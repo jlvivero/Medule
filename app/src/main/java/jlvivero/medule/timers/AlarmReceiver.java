@@ -1,6 +1,7 @@
 package jlvivero.medule.timers;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,10 @@ import android.util.Log;
 
 import jlvivero.medule.MainActivity;
 import jlvivero.medule.R;
+import jlvivero.medule.models.Database;
+import jlvivero.medule.models.Medicine;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by joslu on 11/9/2017.
@@ -25,6 +30,15 @@ public class AlarmReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        int id = intent.getIntExtra("id",0);
+
+        //notification code
+        createNotification(context);
+
+        Database db = Database.getDatabase(context);
+        Medicine toEdit = db.medicineDao().get(id);
+        toEdit.setDue(true);
+        db.medicineDao().updateMed(toEdit);
 
         //this actually builds the notification, we don't want to actually build it yet
         //so we have to move this code to alarm receiver. But alarm receiver needs to be able to recieve the information above somehow
@@ -35,10 +49,8 @@ public class AlarmReceiver extends BroadcastReceiver{
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
         // your app to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
         MAN.notify(0, builder.build());
         Log.d("alarm", "sound the alarm");
@@ -53,4 +65,30 @@ public class AlarmReceiver extends BroadcastReceiver{
     public static void getChannel(NotificationChannel channel){
         CH = channel;
     }
+
+
+    public void createNotification(Context context){
+        //change this to a different method that has the annotaiton @TargetAPI
+        NotificationManager notif = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        //the id of the channel
+        String id = "medule_reminder";
+        //the user-visible name of the channel
+        CharSequence name = context.getString(R.string.channel_name);
+        //the user-visible description of the channel
+        String description = context.getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        createChannel(notif, id, name, importance, description);
+        getNotificationInfo(notif, id);
+    }
+
+    @TargetApi(26)
+    public void createChannel(NotificationManager notif, String id, CharSequence name, int importance, String description) {
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        channel.setDescription(description);
+        channel.enableLights(true);
+        channel.enableVibration(true);
+        notif.createNotificationChannel(channel);
+        getChannel(channel);
+    }
+
 }

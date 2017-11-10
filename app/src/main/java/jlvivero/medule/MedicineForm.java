@@ -1,5 +1,7 @@
 package jlvivero.medule;
 
+import android.util.Log;
+
 import static java.lang.String.*;
 
 /**
@@ -11,10 +13,14 @@ public class MedicineForm {
     private String name;
     private int hours;
     private int id;
+    private boolean due;
+    private String dueName;
     public MedicineForm() {
         this.error = 1;
         this.name = "nothing";
         this.hours = 0;
+        this.due = true;
+        this.dueName = "xx";
     }
 
     public int hasError() {
@@ -45,8 +51,33 @@ public class MedicineForm {
 
     public int getId(){ return this.id;}
 
+    public void setDue(boolean d) {
+        this.due = d;
+        if(this.due){
+            this.dueName = "\n Take now";
+        }
+        else {
+            this.dueName = " ";
+        }
+    }
+    public boolean isDue() {
+        if(this.due) {
+            this.dueName = "\n Take now";
+        }
+        else {
+            this.dueName = " ";
+        }
+        return this.due;
+    }
+
     @Override
     public String toString() {
-        return format("%s %n Time between dosages: %d Hours", this.name, this.hours);
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.name);
+        builder.append("\n");
+        builder.append(" Time between dosages: ");
+        builder.append(this.hours);
+        builder.append(this.dueName);
+        return builder.toString();
     }
 }
