@@ -16,4 +16,6 @@
     <string name="medule">Medule</string>
     <string name="take_all_meds">Take all meds</string>
     <string name="sort_by">Sort By</string>
+    <string name="channel_name">Medule</string>
+    <string name="channel_description">Notifications for Medule app</string>
 </resources>

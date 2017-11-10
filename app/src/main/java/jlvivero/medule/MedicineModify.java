@@ -112,7 +112,6 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
 
         switch (v.getId()) {
             case R.id.take: //medicine taken
-                Log.d("pending", "not implemented");
                 mCallback.alarm(getArguments().getInt("pos"));
                 break;
 

@@ -1,6 +1,11 @@
 package jlvivero.medule;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.TaskStackBuilder;
+import android.support.v4.app.NotificationCompat;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     //timer variables
     private AlarmManager alarm;
     private PendingIntent alarmIntent;
-    private ArrayList<PendingIntent> intentArray;
+    private ArrayList<PendingIntent> intentArray = new ArrayList<>();
 
     //information processing variables
     private int state;
@@ -54,22 +59,11 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         Toolbar mytoolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(mytoolbar);
 
-        //TODO: consider making a handler class for db
-        //test code for database
-        db = Database.getDatabase(this);
-        List<Medicine> templist = db.medicineDao().getAll();
-        list = new ArrayList<>();
-        for (Medicine lst: templist) {
-            lst.converting();
-            list.add(lst.getForm());
-        }
-
-        //list of medicines fragment
-        meds = MedicineList.newInstance(list);
-        transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_container, meds).commit();
+        //notification code
+        createNotification();
 
         FloatingActionButton floatButton =  findViewById(R.id.floatingActionButton);
+
         //floating button should always add new medicine
         //TODO: design decision, should the floating button change action depending on context?
         floatButton.setOnClickListener(new View.OnClickListener() {
@@ -79,8 +73,52 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 changeState(1);
             }
         });
-        //TODO: add the timer functionality and the notification functionality
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        //TODO: consider making a handler class for db
+        //test code for database
+        db = Database.getDatabase(this);
+        List<Medicine> templist = db.medicineDao().getAll();
+        list = new ArrayList<>();
+        for (Medicine lst: templist) {
+            lst.converting();
+            list.add(lst.getForm());
+        }
+        //list of medicines fragment
+        meds = MedicineList.newInstance(list);
+        transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, meds).commit();
+    }
+
+    public void createNotification(){
+        //change this to a different method that has the annotaiton @TargetAPI
+        NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        //the id of the channel
+        String id = "medule_reminder";
+        //the user-visible name of the channel
+        CharSequence name = getString(R.string.channel_name);
+        //the user-visible description of the channel
+        String description = getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        createChannel(notif, id, name, importance, description);
+
+        AlarmReceiver.getNotificationInfo(notif, id);
+
+
+    }
+
+    @TargetApi(26)
+    public void createChannel(NotificationManager notif, String id, CharSequence name, int importance, String description) {
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        channel.setDescription(description);
+        channel.enableLights(true);
+        channel.enableVibration(true);
+        notif.createNotificationChannel(channel);
+        AlarmReceiver.getChannel(channel);
     }
 
     @Override
@@ -211,6 +249,16 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void deleteValue(int position) {
+        //TODO: make a method that does what's repeated in deletevalue and alarm
+        //have the method return and alarm Intent and just call alarm.cancel for delete and
+        //alarm.set for alarm method
+        alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        int code = list.get(position).getId();
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
+        alarm.cancel(alarmIntent);
+        Log.d("alarm", "I canceled the alarm");
+
         Medicine med = new Medicine();
         med.setForm(list.get(position));
         db.medicineDao().delete(med);
@@ -222,8 +270,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         changeState(0);
     }
     public void alarm(int pos) {
-        //TODO: design decision, probably need to add intent id to database or a data structure that related med id with intent
-        //TODO: check how you can delete alarms after closing the app im thinking recreating the alarmintent with the code
+        //TODO: design decision, probably need to add intent id to database or a data structure that related med id with inten
         int time = list.get(pos).getHours();
         int code = list.get(pos).getId();
         //dummy code for alarm timers
@@ -231,6 +278,10 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         Intent intent = new Intent(this, AlarmReceiver.class);
         alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
+
+        //cancel any pending alarm from this medicine
+        alarm.cancel(alarmIntent);
+
         //this is set to minutes instead of hours for testing purposes
         //TODO: change time for time * 60 for it to be hours
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
