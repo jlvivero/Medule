@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     //timer variables
     private AlarmManager alarm;
     private PendingIntent alarmIntent;
-    private ArrayList<PendingIntent> intentArray = new ArrayList<>();
 
     //information processing variables
     private int state;
@@ -283,7 +282,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         //this is set to minutes instead of hours for testing purposes
         //TODO: change time for time * 60 for it to be hours
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
-        intentArray.add(alarmIntent);
         changeState(0);
         //TODO: maybe add a message for changestate saying medicine taken was successful
     }

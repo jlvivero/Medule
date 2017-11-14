@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -37,14 +38,18 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         ArrayList<String> nameX = new ArrayList<>();
         ArrayList<Integer> idY = new ArrayList<>();
         ArrayList<Integer> hoursZ = new ArrayList<>();
+        boolean[] dueW = new boolean[lst.size()];
+        int i = 0;
         for (MedicineForm item: lst) {
             nameX.add(item.getName());
             idY.add(item.getId());
             hoursZ.add(item.getHours());
+            dueW[i] = item.isDue();
         }
         args.putStringArrayList("name", nameX);
         args.putIntegerArrayList("id", idY);
         args.putIntegerArrayList("hours", hoursZ);
+        args.putBooleanArray("due", dueW);
         medicineList.setArguments(args);
         return medicineList;
     }
@@ -66,17 +71,19 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     public void onStart() {
         super.onStart();
         try {
+            boolean[] due = getArguments().getBooleanArray("due");
             ArrayList<String> name;
             ArrayList<Integer> id, hours;
             name = getArguments().getStringArrayList("name");
             id = getArguments().getIntegerArrayList("id");
             hours = getArguments().getIntegerArrayList("hours");
-            if(accepted(name, hours, id)) {
+            if(accepted(name, hours, id, due)) {
                 for (int i = 0; i < name.size(); i++){
                     MedicineForm temp = new MedicineForm();
                     temp.setName(name.get(i));
                     temp.setHours(hours.get(i));
                     temp.setId(id.get(i));
+                    temp.setDue(due[i]);
                     medicines.add(temp);
                 }
             }
@@ -111,8 +118,8 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
 
     }
 
-    private boolean accepted(ArrayList<String> name, ArrayList<Integer> hours, ArrayList<Integer> id) {
-        return name != null && hours != null && id != null && name.size() == hours.size() && hours.size() == id.size();
+    private boolean accepted(ArrayList<String> name, ArrayList<Integer> hours, ArrayList<Integer> id, boolean[] due) {
+        return name != null && hours != null && id != null && due != null && name.size() == hours.size() && hours.size() == id.size() && Array.getLength(due) == id.size();
     }
 
     public ArrayList<MedicineForm> getMedicines() {

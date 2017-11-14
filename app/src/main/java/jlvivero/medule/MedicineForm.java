@@ -15,12 +15,13 @@ public class MedicineForm {
     private int id;
     private boolean due;
     private String dueName;
+
     public MedicineForm() {
         this.error = 1;
         this.name = "nothing";
         this.hours = 0;
         this.due = true;
-        this.dueName = "xx";
+        this.dueName = "Take nowi";
     }
 
     public int hasError() {
