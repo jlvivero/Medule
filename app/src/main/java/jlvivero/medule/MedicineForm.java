@@ -21,7 +21,7 @@ public class MedicineForm {
         this.name = "nothing";
         this.hours = 0;
         this.due = true;
-        this.dueName = "Take nowi";
+        this.dueName = "Take now";
     }
 
     public int hasError() {

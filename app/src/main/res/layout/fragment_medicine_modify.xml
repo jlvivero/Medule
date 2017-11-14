@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_bright"
             android:layout_margin="10dp"
+            android:textSize="18sp"
             android:text="@string/take_medicine" />
 
         <Button
@@ -25,6 +26,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_bright"
             android:layout_margin="10dp"
+            android:textSize="18sp"
             android:text="@string/change_time" />
 
         <Button
@@ -33,6 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_blue_bright"
             android:layout_margin="10dp"
+            android:textSize="18sp"
             android:text="@string/change_name" />
 
         <Button
@@ -41,6 +44,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:layout_margin="10dp"
+            android:textSize="18sp"
             android:text="@string/delete" />
 
         <TextView
@@ -48,6 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/change_name"
+            android:textSize="24sp"
             android:visibility="gone" />
 
         <TextView
@@ -55,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/change_time"
+            android:textSize="24sp"
             android:visibility="gone" />
 
         <EditText
@@ -64,6 +70,7 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:selectAllOnFocus="false"
+            android:textSize="18sp"
             android:visibility="gone" />
 
         <EditText
@@ -73,12 +80,14 @@
             android:ems="10"
             android:inputType="number"
             android:selectAllOnFocus="true"
+            android:textSize="18sp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/delete_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="24sp"
             android:text="@string/delete_question"
             android:visibility="gone" />
 
@@ -89,6 +98,7 @@
             android:layout_margin="10dp"
             android:background="@android:color/holo_blue_bright"
             android:text="Confirm"
+            android:textSize="18sp"
             android:visibility="gone" />
 
     </LinearLayout>

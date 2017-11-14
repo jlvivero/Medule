@@ -31,7 +31,6 @@ import jlvivero.medule.models.Medicine;
 import jlvivero.medule.timers.AlarmReceiver;
 
 
-//TODO: make text bigger overall
 //TODO: design decision, maybe add an option to change the size of the font
 //TODO: filter by pending
 //TODO: sort by next dose
@@ -41,7 +40,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     private Database db;
 
     //timer variables
-    private AlarmManager alarm;
     private PendingIntent alarmIntent;
 
     //information processing variables
@@ -86,21 +84,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         list = new ArrayList<>();
         for (Medicine lst: templist) {
             lst.converting();
-            if(lst.getDue()){
-                Log.d("bug", "is due");
-            }
-            else{
-                Log.d("bug", "is not due");
-            }
             list.add(lst.getForm());
-        }
-        for(MedicineForm lst: list) {
-            if(lst.isDue()) {
-                Log.d("bug", "real due");
-            }
-            else {
-                Log.d("bug", "real not due");
-            }
         }
         //list of medicines fragment
         meds = MedicineList.newInstance(list);
@@ -238,16 +222,10 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void deleteValue(int position) {
-        //TODO: make a method that does what's repeated in deletevalue and alarm
         //have the method return and alarm Intent and just call alarm.cancel for delete and
         //alarm.set for alarm method
-        alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         int code = list.get(position).getId();
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
-        alarm.cancel(alarmIntent);
-        Log.d("alarm", "I canceled the alarm");
-
+        setAlarm(code);
         Medicine med = new Medicine();
         med.setForm(list.get(position));
         db.medicineDao().delete(med);
@@ -263,27 +241,29 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
         int time = list.get(pos).getHours();
         int code = list.get(pos).getId();
-
         list.get(pos).setDue(false);
         Medicine med = new Medicine();
         med.setForm(list.get(pos));
         db.medicineDao().updateMed(med);
 
         //dummy code for alarm timers
-        Log.d("alarm", "just activated the alarm");
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra("id", code);
-        alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
-
-        //cancel any pending alarm from this medicine
-        alarm.cancel(alarmIntent);
-
-        //this is set to minutes instead of hours for testing purposes
-        //TODO: change time for time * 60 for it to be hours
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
+        AlarmManager alarm = setAlarm(code);
+        //delete one * 60 to test the values in minutes
+        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * 60 * time, alarmIntent);
         changeState(0);
         //TODO: maybe add a message for changestate saying medicine taken was successful
+    }
+
+    //sets alarm and deletes any instance of a previous alarm
+    //this way it can be used to delete an alarm and can be compounded with alarm.set to start a new alarm (while also deleting any other previous alarm so that they don't overlap)
+    private AlarmManager setAlarm(int code) {
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("id", code);
+        AlarmManager alrm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = PendingIntent.getBroadcast(this, code, intent, 0);
+        //cancel any pending alarm from this medicine
+        alrm.cancel(alarmIntent);
+        return alrm;
     }
 
 }

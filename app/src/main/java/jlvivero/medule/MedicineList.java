@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * Created by joslu on 10/31/2017.
  */
 
+//TODO: text looks very light, maybe have a different color for the medicine list
 public class MedicineList extends Fragment implements ListView.OnItemClickListener{
 
     View view;
@@ -45,6 +46,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
             idY.add(item.getId());
             hoursZ.add(item.getHours());
             dueW[i] = item.isDue();
+            i++;
         }
         args.putStringArrayList("name", nameX);
         args.putIntegerArrayList("id", idY);
@@ -59,7 +61,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         view = inflater.inflate(R.layout.fragment_medicine_list, container, false);
 
         //views that are used inside the fragment
-        adapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_list_item_1, medicines);
+        adapter = new ArrayAdapter<>(this.getActivity(), R.layout.text_view, medicines);
         ListView list = view.findViewById(R.id.meds);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
