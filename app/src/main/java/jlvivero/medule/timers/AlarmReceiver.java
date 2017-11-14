@@ -39,11 +39,11 @@ public class AlarmReceiver extends BroadcastReceiver{
         Medicine toEdit = db.medicineDao().get(id);
         toEdit.setDue(true);
         db.medicineDao().updateMed(toEdit);
-
+        String name = toEdit.getMedName();
         //this actually builds the notification, we don't want to actually build it yet
         //so we have to move this code to alarm receiver. But alarm receiver needs to be able to recieve the information above somehow
         //TODO: make or get an icon for notifications
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ID).setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("reminder").setContentText("take your meds");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ID).setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("reminder").setContentText("It's time to take " + name);
         Intent resultIntent = new Intent(context, MainActivity.class);
         // The stack builder object will contain an artificial back stack for the
         // started Activity.

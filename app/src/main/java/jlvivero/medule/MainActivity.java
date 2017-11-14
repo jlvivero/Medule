@@ -248,7 +248,8 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
         //dummy code for alarm timers
         AlarmManager alarm = setAlarm(code);
-        //delete one * 60 to test the values in minutes
+        //uncomment this and comment the other one for testing
+        //alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * 60 * time, alarmIntent);
         changeState(0);
         //TODO: maybe add a message for changestate saying medicine taken was successful
