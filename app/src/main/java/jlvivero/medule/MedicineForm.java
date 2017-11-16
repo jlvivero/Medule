@@ -15,6 +15,7 @@ public class MedicineForm {
     private int id;
     private boolean due;
     private String dueName;
+    public boolean visible;
 
     public MedicineForm() {
         this.error = 1;
@@ -22,6 +23,7 @@ public class MedicineForm {
         this.hours = 0;
         this.due = true;
         this.dueName = "Take now";
+        this.visible = true;
     }
 
     public int hasError() {
@@ -73,6 +75,9 @@ public class MedicineForm {
 
     @Override
     public String toString() {
+        if(!this.visible) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(this.name);
         builder.append("\n");

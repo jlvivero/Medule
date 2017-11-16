@@ -40,8 +40,13 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         ArrayList<Integer> idY = new ArrayList<>();
         ArrayList<Integer> hoursZ = new ArrayList<>();
         boolean[] dueW = new boolean[lst.size()];
+        ArrayList<Integer> visible = new ArrayList<>();
         int i = 0;
         for (MedicineForm item: lst) {
+            if(item.visible)
+                visible.add(1);
+            else
+                visible.add(0);
             nameX.add(item.getName());
             idY.add(item.getId());
             hoursZ.add(item.getHours());
@@ -52,6 +57,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         args.putIntegerArrayList("id", idY);
         args.putIntegerArrayList("hours", hoursZ);
         args.putBooleanArray("due", dueW);
+        args.putIntegerArrayList("vis", visible);
         medicineList.setArguments(args);
         return medicineList;
     }
@@ -76,9 +82,11 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
             boolean[] due = getArguments().getBooleanArray("due");
             ArrayList<String> name;
             ArrayList<Integer> id, hours;
+            ArrayList<Integer> visible;
             name = getArguments().getStringArrayList("name");
             id = getArguments().getIntegerArrayList("id");
             hours = getArguments().getIntegerArrayList("hours");
+            visible = getArguments().getIntegerArrayList("vis");
             if(accepted(name, hours, id, due)) {
                 for (int i = 0; i < name.size(); i++){
                     MedicineForm temp = new MedicineForm();
@@ -86,6 +94,12 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
                     temp.setHours(hours.get(i));
                     temp.setId(id.get(i));
                     temp.setDue(due[i]);
+                    if(visible.get(i) == 1){
+                        temp.visible = true;
+                    }
+                    else {
+                        temp.visible = false;
+                    }
                     medicines.add(temp);
                 }
             }

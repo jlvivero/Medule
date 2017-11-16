@@ -12,6 +12,7 @@ import jlvivero.medule.MedicineForm;
  */
 //TODO: consider removing all the instances of MedicineForm and replacing them with medicine class
 //TODO: design decision, make a wrapper for database managment so that you can transform from medicineform to medicine or remove medicine form
+//TODO: add take_time and due_date values so that we can dinamically calculate how much time is left (take time might not be necessary)
 @Entity
 public class Medicine {
     @PrimaryKey

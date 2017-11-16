@@ -31,8 +31,7 @@ import jlvivero.medule.models.Medicine;
 import jlvivero.medule.timers.AlarmReceiver;
 
 
-//TODO: design decision, maybe add an option to change the size of the font
-//TODO: filter by pending
+//TODO: design decision, maybe add an option to change the size of the fon
 //TODO: sort by next dose
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
 
@@ -127,9 +126,28 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_all:
-                //TODO: implement a take all method once timers are made
+                for(int i = 0; i < list.size(); i++){
+                    if(list.get(i).isDue()) {
+                        alarm(i);
+                    }
+                }
                 return true;
             case R.id.sort_by:
+                return true;
+            case R.id.filter_pending:
+                for(int i = 0; i < list.size(); i++) {
+                    if(!list.get(i).isDue()) {
+                        list.get(i).visible = false;
+                    }
+                }
+                changeState(0);
+                return true;
+            case R.id.remove_filter:
+                //TODO: maybe merge remove_filter and filter_pending and just make a turn filter on function
+                for(int i = 0; i < list.size(); i++) {
+                    list.get(i).visible = true;
+                }
+                changeState(0);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -236,6 +254,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     public void nothing() {
         changeState(0);
     }
+
     public void alarm(int pos) {
         //TODO: design decision, probably need to add intent id to database or a data structure that related med id with inten
 
