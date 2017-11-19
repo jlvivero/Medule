@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
+import java.sql.Date;
 import java.util.ArrayList;
 
 import jlvivero.medule.models.Medicine;
@@ -43,6 +44,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         ArrayList<Integer> hoursZ = new ArrayList<>();
         boolean[] dueW = new boolean[lst.size()];
         ArrayList<Integer> visible = new ArrayList<>();
+        long[] dueDate = new long[lst.size()];
         int i = 0;
         for (Medicine item: lst) {
             if(item.visible)
@@ -53,6 +55,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
             idY.add(item.getId());
             hoursZ.add(item.getHours());
             dueW[i] = item.isDue();
+            dueDate[i] = item.getDueDate().getTime();
             i++;
         }
         args.putStringArrayList("name", nameX);
@@ -60,6 +63,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         args.putIntegerArrayList("hours", hoursZ);
         args.putBooleanArray("due", dueW);
         args.putIntegerArrayList("vis", visible);
+        args.putLongArray("dates", dueDate);
         medicineList.setArguments(args);
         return medicineList;
     }
@@ -82,6 +86,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         super.onStart();
         try {
             boolean[] due = getArguments().getBooleanArray("due");
+            long[] dueDate = getArguments().getLongArray("dates");
             ArrayList<String> name;
             ArrayList<Integer> id, hours;
             ArrayList<Integer> visible;
@@ -96,6 +101,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
                     temp.setHours(hours.get(i));
                     temp.setId(id.get(i));
                     temp.setDue(due[i]);
+                    temp.setDueDate(new Date(dueDate[i]));
                     temp.visible = visible.get(i) == 1;
                     medicines.add(temp);
                 }

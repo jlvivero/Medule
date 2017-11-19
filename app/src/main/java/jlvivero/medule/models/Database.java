@@ -2,6 +2,7 @@ package jlvivero.medule.models;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
@@ -9,7 +10,8 @@ import android.content.Context;
  * Created by joslu on 11/9/2017.
  */
 
-@android.arch.persistence.room.Database(entities = Medicine.class, version = 2)
+@android.arch.persistence.room.Database(entities = Medicine.class, version = 3)
+@TypeConverters({DateTypeconverter.class})
 public abstract class Database extends RoomDatabase{
     //MedicineDao is a classa nnotated with @dao
     private static Database INSTANCE;

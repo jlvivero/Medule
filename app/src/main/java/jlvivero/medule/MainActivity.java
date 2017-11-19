@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         int time = list.get(pos).getHours();
         int code = list.get(pos).getId();
         list.get(pos).setDue(false);
+        list.get(pos).setDueDate(new Date(SystemClock.elapsedRealtime() + 60 * 1000 * 60 * time));
         Medicine med = list.get(pos);
         db.medicineDao().updateMed(med);
 
