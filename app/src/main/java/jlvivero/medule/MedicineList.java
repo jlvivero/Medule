@@ -3,6 +3,7 @@ package jlvivero.medule;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,10 @@ import jlvivero.medule.models.Medicine;
  */
 
 //TODO: text looks very light, maybe have a different color for the medicine list
-public class MedicineList extends Fragment implements ListView.OnItemClickListener{
+public class MedicineList extends Fragment implements ListView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
 
     View view;
+    private SwipeRefreshLayout refresh;
     private ArrayList<Medicine> medicines = new ArrayList<>();
     private ArrayAdapter<Medicine> adapter;
     ModifyValueListener mCallback;
@@ -71,12 +73,14 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.fragment_medicine_list, container, false);
-
+        refresh = view.findViewById(R.id.swiperefresh);
+        //refresh.setColorSchemeColors(R.color.swipe_color1, R.color.swipe_color2);
         //views that are used inside the fragment
         adapter = new ArrayAdapter<>(this.getActivity(), R.layout.text_view, medicines);
         ListView list = view.findViewById(R.id.meds);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
+        refresh.setOnRefreshListener(this);
 
         return view;
     }
@@ -122,6 +126,14 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must implement ModifyValueListener");
         }
+    }
+
+
+    @Override
+    public void onRefresh(){
+        //idk what to add here yet
+        adapter.notifyDataSetChanged();
+        refresh.setRefreshing(false);
     }
 
     @Override

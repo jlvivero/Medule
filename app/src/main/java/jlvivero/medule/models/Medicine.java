@@ -31,14 +31,10 @@ public class Medicine {
     @Ignore
     public boolean visible = true;
 
-    @Ignore
-    private String dueName = "Take now";
-
     public Medicine(){
         this.medName = "nothing";
         this.hours = 0;
         this.due = true;
-        this.dueName = "Take now";
         this.visible = true;
         this.dueDate = new Date(SystemClock.elapsedRealtime());
     }
@@ -65,12 +61,6 @@ public class Medicine {
 
     public void setDue(boolean due) {
         this.due = due;
-        if(this.due) {
-            this.dueName = "\n Take now";
-        }
-        else {
-            this.dueName = " ";
-        }
     }
 
     public boolean getDue(){
@@ -80,6 +70,50 @@ public class Medicine {
     @Ignore
     public boolean isDue() {return this.getDue();}
 
+
+    @Ignore
+    private String dueOrNot() {
+        StringBuilder builder = new StringBuilder();
+        if(this.dueDate.getTime() < SystemClock.elapsedRealtime() || this.isDue()){
+            builder.append(" Time between dosages: ");
+            builder.append(this.hours);
+            if(this.hours == 1) {
+                builder.append(" hour");
+            }
+            else{
+                builder.append(" hours");
+            }
+            builder.append("\n     TAKE NOW");
+        }
+        else{
+            builder.append(" Time before next dose: ");
+            builder.append(get_time_string());
+        }
+        return builder.toString();
+    }
+
+    @Ignore
+    private String get_time_string(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n   ");
+        long hours = this.dueDate.getTime() - SystemClock.elapsedRealtime();
+        hours = (hours / 1000) / 60;
+        //hours is in minutes right now
+        if(hours >= 60) {
+            //means that there's at least one hour
+            long minutes = hours % 60;
+            hours = hours / 60;
+            builder.append(hours);
+            builder.append(" hours and ");
+            builder.append(minutes);
+            builder.append(" minutes");
+        }
+        else {
+            builder.append(hours);
+            builder.append(" minutes");
+        }
+        return builder.toString();
+    }
     @Override
     public String toString() {
         if(!this.visible) {
@@ -88,34 +122,7 @@ public class Medicine {
         StringBuilder builder = new StringBuilder();
         builder.append(this.medName);
         builder.append("\n");
-        //TODO: implement method that changes the toString display dynamically in a modular way
-        if(this.dueDate.getTime() < SystemClock.elapsedRealtime()){
-            //this means that I have the take now thing
-            builder.append(" Time between dosages: ");
-            builder.append(this.hours);
-            builder.append(" hours");
-        }
-        else{
-            builder.append(" Time before next dosage: ");
-            long hours = this.dueDate.getTime() - SystemClock.elapsedRealtime();
-            builder.append("\n    ");
-            hours = (hours / 1000) / 60;
-            //hours is so far minutes
-            if(hours >= 60){
-                long minutes = hours % 60;
-                hours = hours / 60;
-                builder.append(hours);
-                builder.append(" hours");
-                builder.append(" and ");
-                builder.append(minutes);
-                builder.append(" minutes");
-            }
-            else{
-                builder.append(hours);
-                builder.append(" minutes");
-            }
-        }
-        builder.append(this.dueName);
+        builder.append(dueOrNot());
         return builder.toString();
     }
 

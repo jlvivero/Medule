@@ -42,14 +42,8 @@ public class AlarmReceiver extends BroadcastReceiver{
         String name = toEdit.getMedName();
         //this actually builds the notification, we don't want to actually build it yet
         //so we have to move this code to alarm receiver. But alarm receiver needs to be able to recieve the information above somehow
-        //TODO: make or get an icon for notifications
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ID).setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("reminder").setContentText("It's time to take " + name);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ID).setSmallIcon(R.drawable.ic_stat_onesignal_default).setContentTitle("reminder").setContentText("It's time to take " + name);
         Intent resultIntent = new Intent(context, MainActivity.class);
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your app to the Home screen.
-
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
         MAN.notify(0, builder.build());

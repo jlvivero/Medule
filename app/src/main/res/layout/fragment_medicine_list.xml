@@ -4,11 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="jlvivero.medule.MedicineList">
-
-    <ListView
-        android:id="@+id/meds"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/meds"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="8dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </FrameLayout>

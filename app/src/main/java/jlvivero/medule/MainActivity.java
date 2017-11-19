@@ -1,12 +1,6 @@
 package jlvivero.medule;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.TaskStackBuilder;
-import android.support.v4.app.NotificationCompat;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +45,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     private MedicineList meds;
     private android.support.v4.app.FragmentTransaction transaction;
 
-    //TODO: update information from list when you slide up
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,20 +72,11 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     @Override
     public void onResume(){
         super.onResume();
-        //TODO: consider making a handler class for db
         //test code for database
         db = Database.getDatabase(this);
         List<Medicine> templist = db.medicineDao().getAll();
         list = new ArrayList<>();
         list.addAll(templist);
-        //this part should be deleted in the future
-        /*
-        list = new ArrayList<>();
-        for (Medicine lst: templist) {
-            lst.converting();
-            list.add(lst.getForm());
-        }*/
-        //list of medicines fragment
         meds = MedicineList.newInstance(list);
         transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, meds).commit();
@@ -206,14 +190,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     public void sent(Medicine callback) {
        list.add(callback);
        db.medicineDao().insertAll(callback);
-        /*
-        if(callback.hasError() == 0)
-        {
-            Medicine med = new Medicine();
-            med.setForm(callback);
-            list.add(callback);
-            db.medicineDao().insertAll(med);
-        }*/
         changeState(0);
     }
 
@@ -272,7 +248,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         Medicine med = list.get(pos);
         db.medicineDao().updateMed(med);
 
-        //dummy code for alarm timers
+        //code for alarm timers
         AlarmManager alarm = setAlarm(code);
         //uncomment this and comment the other one for testing
         //alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000 * time, alarmIntent);
