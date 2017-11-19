@@ -14,6 +14,8 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import jlvivero.medule.models.Medicine;
+
 /**
  * Created by joslu on 10/31/2017.
  */
@@ -22,15 +24,15 @@ import java.util.ArrayList;
 public class MedicineList extends Fragment implements ListView.OnItemClickListener{
 
     View view;
-    private ArrayList<MedicineForm> medicines = new ArrayList<>();
-    private ArrayAdapter<MedicineForm> adapter;
+    private ArrayList<Medicine> medicines = new ArrayList<>();
+    private ArrayAdapter<Medicine> adapter;
     ModifyValueListener mCallback;
 
     public interface ModifyValueListener {
         void edit(int error, int position);
     }
 
-    public static MedicineList newInstance(ArrayList<MedicineForm> lst) {
+    public static MedicineList newInstance(ArrayList<Medicine> lst) {
         MedicineList medicineList = new MedicineList();
         if(lst == null) {
             return medicineList;
@@ -42,12 +44,12 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         boolean[] dueW = new boolean[lst.size()];
         ArrayList<Integer> visible = new ArrayList<>();
         int i = 0;
-        for (MedicineForm item: lst) {
+        for (Medicine item: lst) {
             if(item.visible)
                 visible.add(1);
             else
                 visible.add(0);
-            nameX.add(item.getName());
+            nameX.add(item.getMedName());
             idY.add(item.getId());
             hoursZ.add(item.getHours());
             dueW[i] = item.isDue();
@@ -89,17 +91,12 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
             visible = getArguments().getIntegerArrayList("vis");
             if(accepted(name, hours, id, due)) {
                 for (int i = 0; i < name.size(); i++){
-                    MedicineForm temp = new MedicineForm();
-                    temp.setName(name.get(i));
+                    Medicine temp = new Medicine();
+                    temp.setMedName(name.get(i));
                     temp.setHours(hours.get(i));
                     temp.setId(id.get(i));
                     temp.setDue(due[i]);
-                    if(visible.get(i) == 1){
-                        temp.visible = true;
-                    }
-                    else {
-                        temp.visible = false;
-                    }
+                    temp.visible = visible.get(i) == 1;
                     medicines.add(temp);
                 }
             }
@@ -123,7 +120,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        MedicineForm item;
+        Medicine item;
         item = adapter.getItem(i);
         if(item != null){
             mCallback.edit(0,i);
@@ -138,7 +135,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         return name != null && hours != null && id != null && due != null && name.size() == hours.size() && hours.size() == id.size() && Array.getLength(due) == id.size();
     }
 
-    public ArrayList<MedicineForm> getMedicines() {
+    public ArrayList<Medicine> getMedicines() {
         return medicines;
     }
 

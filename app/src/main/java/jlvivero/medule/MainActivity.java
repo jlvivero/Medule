@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     //information processing variables
     private int state;
     private int modifyPos;
-    private ArrayList<MedicineForm> list = new ArrayList<>();
+    private ArrayList<Medicine> list = new ArrayList<>();
+
+
     private MedicineList meds;
     private android.support.v4.app.FragmentTransaction transaction;
 
@@ -81,10 +83,14 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         db = Database.getDatabase(this);
         List<Medicine> templist = db.medicineDao().getAll();
         list = new ArrayList<>();
+        list.addAll(templist);
+        //this part should be deleted in the future
+        /*
+        list = new ArrayList<>();
         for (Medicine lst: templist) {
             lst.converting();
             list.add(lst.getForm());
-        }
+        }*/
         //list of medicines fragment
         meds = MedicineList.newInstance(list);
         transaction = getSupportFragmentManager().beginTransaction();
@@ -156,7 +162,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
 
 
     //obtains the list of medicines from the list fragment so that new stuff can be added
-    public void passData(ArrayList<MedicineForm> data) {
+    public void passData(ArrayList<Medicine> data) {
         list = new ArrayList<>();
         list.addAll(data);
     }
@@ -182,7 +188,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 transaction.replace(R.id.fragment_container, form).commit();
                 break;
             case 2://show fragment to modify a medicine
-                MedicineForm clicked; //medicine that was clicked
+                Medicine clicked; //medicine that was clicked
                 clicked = list.get(modifyPos);
                 MedicineModify modify = MedicineModify.newInstance(clicked, modifyPos);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -196,14 +202,17 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     //callback methods from fragments
 
     //from medicineName fragment
-    public void sent(MedicineForm callback) {
+    public void sent(Medicine callback) {
+       list.add(callback);
+       db.medicineDao().insertAll(callback);
+        /*
         if(callback.hasError() == 0)
         {
             Medicine med = new Medicine();
             med.setForm(callback);
             list.add(callback);
             db.medicineDao().insertAll(med);
-        }
+        }*/
         changeState(0);
     }
 
@@ -222,13 +231,12 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     //from medicineModify fragment
-    public void replaceValues(MedicineForm callback, int position) {
+    public void replaceValues(Medicine callback, int position) {
         if(list.get(position).getId() == callback.getId()){
-            Medicine med = new Medicine();
-            med.setForm(callback);
+            Medicine med = callback;
             db.medicineDao().updateMed(med);
             list.get(position).setHours(callback.getHours());
-            list.get(position).setName(callback.getName());
+            list.get(position).setMedName(callback.getMedName());
             changeState(0);
         }
         else {
@@ -244,8 +252,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         //alarm.set for alarm method
         int code = list.get(position).getId();
         setAlarm(code);
-        Medicine med = new Medicine();
-        med.setForm(list.get(position));
+        Medicine med = list.get(position);
         db.medicineDao().delete(med);
         list.remove(position);
         changeState(0);
@@ -256,13 +263,11 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void alarm(int pos) {
-        //TODO: design decision, probably need to add intent id to database or a data structure that related med id with inten
 
         int time = list.get(pos).getHours();
         int code = list.get(pos).getId();
         list.get(pos).setDue(false);
-        Medicine med = new Medicine();
-        med.setForm(list.get(pos));
+        Medicine med = list.get(pos);
         db.medicineDao().updateMed(med);
 
         //dummy code for alarm timers

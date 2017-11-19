@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import jlvivero.medule.models.Medicine;
+
 public class MedicineName extends Fragment implements View.OnClickListener{
 
     View view;
@@ -21,7 +23,7 @@ public class MedicineName extends Fragment implements View.OnClickListener{
     OnFormIntroducedListener mCallback;
 
     public interface OnFormIntroducedListener {
-        void sent(MedicineForm form);
+        void sent(Medicine form);
         void cancel();
     }
 
@@ -65,15 +67,13 @@ public class MedicineName extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        MedicineForm form;
+        Medicine form;
         switch (v.getId()) {
             //adds medicine
             case R.id.add:
-                form = new MedicineForm();
-                form.setName(name.getText().toString());
+                form = new Medicine();
+                form.setMedName(name.getText().toString());
                 form.setHours(Integer.parseInt(hours.getText().toString()));
-                //TODO: remove setError value from MedicineForm and anything related
-                form.setError(0);
                 form.setId(getArguments().getInt("id") + 1);
                 mCallback.sent(form);
                 break;

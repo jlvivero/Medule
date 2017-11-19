@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import jlvivero.medule.models.Medicine;
 import jlvivero.medule.timers.AlarmReceiver;
 
 /**
@@ -23,19 +24,18 @@ import jlvivero.medule.timers.AlarmReceiver;
  */
 public class MedicineModify extends Fragment implements View.OnClickListener{
     View view;
-    private MedicineForm modify;
+    private Medicine modify;
     private Button confirm;
     private int lastPress;
     CallbackValueListener mCallback;
 
     public interface CallbackValueListener {
-        void replaceValues(MedicineForm values, int position);
+        void replaceValues(Medicine values, int position);
         void deleteValue(int position);
-        void nothing();
         void alarm(int pos);
     }
 
-    public static MedicineModify newInstance(MedicineForm pack, int position) {
+    public static MedicineModify newInstance(Medicine pack, int position) {
         MedicineModify instance = new MedicineModify();
         if(pack == null) {
             return instance;
@@ -46,7 +46,7 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         int id, hours;
         id = pack.getId();
         hours = pack.getHours();
-        name = pack.getName();
+        name = pack.getMedName();
 
         args.putInt("id", id);
         args.putString("name", name);
@@ -79,11 +79,10 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
     public void onStart() {
         super.onStart();
         try {
-            modify = new MedicineForm();
-            modify.setName(getArguments().getString("name", "generic"));
+            modify = new Medicine();
+            modify.setMedName(getArguments().getString("name", "generic"));
             modify.setId(getArguments().getInt("id", -1));
             modify.setHours(getArguments().getInt("hours", 8));
-            modify.setError(0);
         }
         catch (RuntimeException e) {
             Log.d("fragmentError", "Bundle Error");
@@ -108,7 +107,7 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
         EditText editName = view.findViewById(R.id.textName);
         TextView deleteLabel = view.findViewById(R.id.delete_label);
         editHours.setHint(String.valueOf(modify.getHours()));
-        editName.setHint(modify.getName());
+        editName.setHint(modify.getMedName());
 
         switch (v.getId()) {
             case R.id.take: //medicine taken
@@ -161,7 +160,7 @@ public class MedicineModify extends Fragment implements View.OnClickListener{
                             mCallback.replaceValues(modify, getArguments().getInt("pos"));
                         }
                         else {
-                            modify.setName(editName.getText().toString());
+                            modify.setMedName(editName.getText().toString());
                             mCallback.replaceValues(modify, getArguments().getInt("pos"));
                         }
                         break;

@@ -5,12 +5,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-import jlvivero.medule.MedicineForm;
-
 /**
  * Created by joslu on 11/9/2017.
  */
-//TODO: consider removing all the instances of MedicineForm and replacing them with medicine class
 //TODO: design decision, make a wrapper for database managment so that you can transform from medicineform to medicine or remove medicine form
 //TODO: add take_time and due_date values so that we can dinamically calculate how much time is left (take time might not be necessary)
 @Entity
@@ -28,7 +25,18 @@ public class Medicine {
     private boolean due;
 
     @Ignore
-    MedicineForm convert;
+    public boolean visible = true;
+
+    @Ignore
+    private String dueName = "Take now";
+
+    public Medicine(){
+        this.medName = "nothing";
+        this.hours = 0;
+        this.due = true;
+        this.dueName = "Take now";
+        this.visible = true;
+    }
 
     public String getMedName() {
         return this.medName;
@@ -52,29 +60,32 @@ public class Medicine {
 
     public void setDue(boolean due) {
         this.due = due;
+        if(this.due) {
+            this.dueName = "\n Take now";
+        }
+        else {
+            this.dueName = " ";
+        }
     }
 
     public boolean getDue(){
         return this.due;
     }
 
-    public void converting(){
-        this.convert = new MedicineForm();
-        this.convert.setId(this.id);
-        this.convert.setHours(this.hours);
-        this.convert.setName(this.medName);
-        this.convert.setDue(this.due);
-    }
+    @Ignore
+    public boolean isDue() {return this.getDue();}
 
-    public MedicineForm getForm() {
-        return this.convert;
-    }
-
-    public void setForm(MedicineForm form) {
-        this.convert = form;
-        this.medName = this.convert.getName();
-        this.id = this.convert.getId();
-        this.hours = this.convert.getHours();
-        this.due = this.convert.isDue();
+    @Override
+    public String toString() {
+        if(!this.visible) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.medName);
+        builder.append("\n");
+        builder.append(" Time between dosages: ");
+        builder.append(this.hours);
+        builder.append(this.dueName);
+        return builder.toString();
     }
 }
