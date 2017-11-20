@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="sortable">
+        <item name="hi">Do not sort</item>
+        <item name="hi2">Pending</item>
+    </array>
+</resources>

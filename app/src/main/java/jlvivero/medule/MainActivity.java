@@ -26,9 +26,8 @@ import jlvivero.medule.models.Medicine;
 import jlvivero.medule.timers.AlarmReceiver;
 
 
-//TODO: design decision, maybe add an option to change the size of the fon
-//TODO: sort by next dose
-public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener{
+//TODO: design decision, maybe add an option to change the size of the font
+public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener, SortBy.SortByListener{
 
     //persistance variables
     private Database db;
@@ -124,6 +123,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 }
                 return true;
             case R.id.sort_by:
+                changeState(3);
                 return true;
             case R.id.filter_pending:
                 for(int i = 0; i < list.size(); i++) {
@@ -178,6 +178,11 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 MedicineModify modify = MedicineModify.newInstance(clicked, modifyPos);
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, modify).commit();
+                break;
+            case 3://sortby fragment
+                SortBy sorter = new SortBy();
+                sorter.show(getSupportFragmentManager(), "test");
+                break;
             default:
                 break;
         }
@@ -267,6 +272,16 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         //cancel any pending alarm from this medicine
         alrm.cancel(alarmIntent);
         return alrm;
+    }
+
+    public void sortListener(int i){
+        //TODO: implement sortListener and actually sort values for the list
+        Log.d("fragments", "SortBy: did it");
+    }
+
+    public void Cancel(int i ){
+        //TODO: implement cancel method
+        Log.d("fragments", "Cancel: good");
     }
 
 }
