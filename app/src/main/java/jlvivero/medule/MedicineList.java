@@ -132,6 +132,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     @Override
     public void onRefresh(){
         //idk what to add here yet
+        //TODO: sort list on refresh
         adapter.notifyDataSetChanged();
         refresh.setRefreshing(false);
     }

@@ -19,6 +19,7 @@ import android.view.View;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jlvivero.medule.models.Database;
@@ -275,8 +276,22 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void sortListener(int i){
-        //TODO: implement sortListener and actually sort values for the list
+        switch (i)
+        {
+            case 0:
+                Medicine.method = 0;
+                break;
+            case 1:
+                Medicine.method = 1;
+                break;
+            default:
+                Medicine.method = 0;
+                break;
+        }
+        //here i actually sort the list duh
+        Collections.sort(list);
         Log.d("fragments", "SortBy: did it");
+        changeState(0);
     }
 
     public void Cancel(int i ){

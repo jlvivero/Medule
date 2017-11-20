@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import java.sql.Date;
 
@@ -12,7 +13,7 @@ import java.sql.Date;
  * Created by joslu on 11/9/2017.
  */
 @Entity
-public class Medicine {
+public class Medicine implements Comparable<Medicine>{
     @PrimaryKey
     private int id;
 
@@ -30,6 +31,9 @@ public class Medicine {
 
     @Ignore
     public boolean visible = true;
+
+    @Ignore
+    public static int method = 0;
 
     public Medicine(){
         this.medName = "nothing";
@@ -70,6 +74,10 @@ public class Medicine {
     @Ignore
     public boolean isDue() {return this.getDue();}
 
+    @Ignore
+    private long get_date(){
+        return this.dueDate.getTime();
+    }
 
     @Ignore
     private String dueOrNot() {
@@ -132,5 +140,52 @@ public class Medicine {
 
     public Date getDueDate(){
         return this.dueDate;
+    }
+
+    @Override
+    public int compareTo(@NonNull Medicine medicine) {
+        //TODO: make helper methods to make this more modular
+        switch (Medicine.method){
+            case 0:
+                //sort by id
+                if(this.id > medicine.getId()){
+                    return 1;
+                }
+                else if(this.id < medicine.getId()){
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            case 1:
+                //sort by is due or not due, and then after that sort by the time left
+                if(this.isDue() && !medicine.isDue()){
+                    return 1;
+                }
+                if(!this.isDue() && !medicine.isDue()){
+                    //instead of return 0 now  we sort by time
+                    long time1 = this.get_date();
+                    long time2 = medicine.get_date();
+                    if(time1 > time2){
+                        return 1;
+                    }
+                    else if(time1 < time2){
+                        return -1;
+                    }
+                    else{
+                        return 0;
+                    }
+                }
+                if(!this.isDue() && medicine.isDue()){
+                    return -1;
+                }
+                if(this.isDue() && medicine.isDue()){
+                    //TODO: add a method to sort by the hours value since both are due already (maybe)
+                    return 0;
+                }
+                return 0;
+            default:
+                return 0;
+        }
     }
 }
