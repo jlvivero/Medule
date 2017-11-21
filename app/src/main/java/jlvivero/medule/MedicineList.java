@@ -15,6 +15,7 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import jlvivero.medule.models.Medicine;
 
@@ -132,7 +133,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     @Override
     public void onRefresh(){
         //idk what to add here yet
-        //TODO: sort list on refresh
+        Collections.sort(medicines, Collections.<Medicine>reverseOrder());
         adapter.notifyDataSetChanged();
         refresh.setRefreshing(false);
     }

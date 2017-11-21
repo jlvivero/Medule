@@ -28,7 +28,7 @@ import jlvivero.medule.timers.AlarmReceiver;
 
 
 //TODO: design decision, maybe add an option to change the size of the font
-public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener, SortBy.SortByListener{
+public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener, SortBy.SortByListener, FilterBy.FilterByListener{
 
     //persistance variables
     private Database db;
@@ -127,19 +127,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 changeState(3);
                 return true;
             case R.id.filter_pending:
-                for(int i = 0; i < list.size(); i++) {
-                    if(!list.get(i).isDue()) {
-                        list.get(i).visible = false;
-                    }
-                }
-                changeState(0);
-                return true;
-            case R.id.remove_filter:
-                //TODO: maybe merge remove_filter and filter_pending and just make a turn filter on function
-                for(int i = 0; i < list.size(); i++) {
-                    list.get(i).visible = true;
-                }
-                changeState(0);
+                changeState(4);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -182,7 +170,11 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 break;
             case 3://sortby fragment
                 SortBy sorter = new SortBy();
-                sorter.show(getSupportFragmentManager(), "test");
+                sorter.show(getSupportFragmentManager(), "sort");
+                break;
+            case 4:
+                FilterBy filter = new FilterBy();
+                filter.show(getSupportFragmentManager(), "filter");
                 break;
             default:
                 break;
@@ -289,15 +281,41 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 break;
         }
         //here i actually sort the list duh
-        Collections.sort(list);
+        Collections.sort(list, Collections.<Medicine>reverseOrder());
         Log.d("fragments", "SortBy: did it");
         changeState(0);
     }
 
+    //TODO: filter a bug where medicines are still clickable even when filtered
+    public void filterListener(int i){
+        Log.d("Dialog", "filterListener: I am here for some reason");
+        switch (i){
+            case 0:
+                for(int j = 0; j < list.size(); j++) {
+                    list.get(j).visible = true;
+                }
+                changeState(0);
+                break;
+            case 1:
+                Log.d("Dialog", "filterListener: wtf");
+                for(int j = 0; j < list.size(); j++) {
+                    if (!list.get(j).isDue()) {
+                        list.get(j).visible = false;
+                    }
+                }
+                changeState(0);
+                break;
+            default:
+                break;
+        }
+
+    }
     public void Cancel(int i ){
         //I don't think anything should be done if you press cancel tbh
         changeState(0);
         Log.d("fragments", "Cancel: good");
     }
+
+
 
 }

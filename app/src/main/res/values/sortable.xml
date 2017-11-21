@@ -4,4 +4,8 @@
         <item>Do not sort</item>
         <item>Next dosage</item>
     </array>
+    <array name="filters">
+        <item>Do not filter</item>
+        <item>Filter by pending</item>
+    </array>
 </resources>

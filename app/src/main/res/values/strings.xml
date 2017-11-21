@@ -18,6 +18,6 @@
     <string name="sort_by">Sort By</string>
     <string name="channel_name">Medule</string>
     <string name="channel_description">Notifications for Medule app</string>
-    <string name="filter_by_pending">Filter by Pending</string>
+    <string name="filter_by_pending">Filter by</string>
     <string name="remove_filters">remove filters</string>
 </resources>

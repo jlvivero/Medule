@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.sql.Date;
 
@@ -143,11 +144,11 @@ public class Medicine implements Comparable<Medicine>{
     }
 
     @Ignore
-    public int sortById(Medicine medicine){
-        if(this.id > medicine.getId()){
+    private int sortById(Medicine medicine){
+        if(this.id < medicine.getId()){
             return 1;
         }
-        else if(this.id < medicine.getId()){
+        else if(this.id > medicine.getId()){
             return -1;
         }
         else{
@@ -156,8 +157,10 @@ public class Medicine implements Comparable<Medicine>{
     }
 
     @Ignore
-    public int sortbyDue(Medicine medicine) {
+    private int sortbyDue(Medicine medicine) {
         if(this.isDue() && !medicine.isDue()){
+            Log.d("sorting", "medicine1:" + this.medName + "medicine2: " + medicine.medName);
+            Log.d("sorting", "sortbyDue: i got this one time at least");
             return 1;
         }
         if(!this.isDue() && !medicine.isDue()){
@@ -176,7 +179,7 @@ public class Medicine implements Comparable<Medicine>{
     }
 
     @Ignore
-    public int sortByTime(Medicine medicine) {
+    private int sortByTime(Medicine medicine) {
         long time1 = this.get_date();
         long time2 = medicine.get_date();
         if(time1 > time2){
@@ -197,6 +200,7 @@ public class Medicine implements Comparable<Medicine>{
                 //sort by id
                 return sortById(medicine);
             case 1:
+                Log.d("sorting", "I'm sorting this way ");
                 return sortbyDue(medicine);
             default:
                 return 0;

@@ -15,9 +15,5 @@
         android:id="@+id/filter_pending"
         android:icon="@android:drawable/sym_contact_card"
         android:title="@string/filter_by_pending"/>
-    <item
-        android:id="@+id/remove_filter"
-        android:icon="@android:drawable/sym_contact_card"
-        android:title="@string/remove_filters"/>
 
 </menu>
