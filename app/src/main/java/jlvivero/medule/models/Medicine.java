@@ -142,48 +142,62 @@ public class Medicine implements Comparable<Medicine>{
         return this.dueDate;
     }
 
+    @Ignore
+    public int sortById(Medicine medicine){
+        if(this.id > medicine.getId()){
+            return 1;
+        }
+        else if(this.id < medicine.getId()){
+            return -1;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    @Ignore
+    public int sortbyDue(Medicine medicine) {
+        if(this.isDue() && !medicine.isDue()){
+            return 1;
+        }
+        if(!this.isDue() && !medicine.isDue()){
+            //return sortbytime
+            return sortByTime(medicine);
+        }
+        if(!this.isDue() && medicine.isDue()){
+            return  -1;
+        }
+        if(this.isDue() && medicine.isDue()){
+            //TODO: add a method to sort by the hours value since both are due already (maybe)
+            //or jsut sort by id afterwards
+            return 0;
+        }
+        return 0;
+    }
+
+    @Ignore
+    public int sortByTime(Medicine medicine) {
+        long time1 = this.get_date();
+        long time2 = medicine.get_date();
+        if(time1 > time2){
+            return 1;
+        }
+        else if(time1 < time2){
+            return -1;
+        }
+        else{
+            return 0;
+        }
+    }
+
     @Override
     public int compareTo(@NonNull Medicine medicine) {
-        //TODO: make helper methods to make this more modular
         switch (Medicine.method){
             case 0:
                 //sort by id
-                if(this.id > medicine.getId()){
-                    return 1;
-                }
-                else if(this.id < medicine.getId()){
-                    return -1;
-                }
-                else {
-                    return 0;
-                }
+                return sortById(medicine);
             case 1:
-                //sort by is due or not due, and then after that sort by the time left
-                if(this.isDue() && !medicine.isDue()){
-                    return 1;
-                }
-                if(!this.isDue() && !medicine.isDue()){
-                    //instead of return 0 now  we sort by time
-                    long time1 = this.get_date();
-                    long time2 = medicine.get_date();
-                    if(time1 > time2){
-                        return 1;
-                    }
-                    else if(time1 < time2){
-                        return -1;
-                    }
-                    else{
-                        return 0;
-                    }
-                }
-                if(!this.isDue() && medicine.isDue()){
-                    return -1;
-                }
-                if(this.isDue() && medicine.isDue()){
-                    //TODO: add a method to sort by the hours value since both are due already (maybe)
-                    return 0;
-                }
-                return 0;
+                return sortbyDue(medicine);
             default:
                 return 0;
         }

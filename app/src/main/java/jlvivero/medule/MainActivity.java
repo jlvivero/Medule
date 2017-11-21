@@ -295,7 +295,8 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void Cancel(int i ){
-        //TODO: implement cancel method
+        //I don't think anything should be done if you press cancel tbh
+        changeState(0);
         Log.d("fragments", "Cancel: good");
     }
 
