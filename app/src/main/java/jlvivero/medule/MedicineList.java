@@ -19,6 +19,8 @@ import java.util.Collections;
 
 import jlvivero.medule.models.Medicine;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by joslu on 10/31/2017.
  */
@@ -26,9 +28,11 @@ import jlvivero.medule.models.Medicine;
 //TODO: text looks very light, maybe have a different color for the medicine list
 public class MedicineList extends Fragment implements ListView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
 
+    //private static int filter;
     View view;
     private SwipeRefreshLayout refresh;
     private ArrayList<Medicine> medicines = new ArrayList<>();
+    private ArrayList<Medicine> fullList = new ArrayList<>();
     private ArrayAdapter<Medicine> adapter;
     ModifyValueListener mCallback;
 
@@ -36,7 +40,7 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         void edit(int error, int position);
     }
 
-    public static MedicineList newInstance(ArrayList<Medicine> lst) {
+    public static MedicineList newInstance(ArrayList<Medicine> lst){
         MedicineList medicineList = new MedicineList();
         if(lst == null) {
             return medicineList;
@@ -108,7 +112,10 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
                     temp.setDue(due[i]);
                     temp.setDueDate(new Date(dueDate[i]));
                     temp.visible = visible.get(i) == 1;
-                    medicines.add(temp);
+                    fullList.add(temp);
+                    if(temp.visible){
+                        medicines.add(temp);
+                    }
                 }
             }
             adapter.notifyDataSetChanged();
@@ -142,17 +149,22 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Medicine item;
         item = adapter.getItem(i);
-        if(item != null){
-            mCallback.edit(0,i);
+        //find the itemid in the full list
+        int position = 0;
+        //TODO: maybe only do this when a flag about filtering is up
+        for(int j = 0; j < fullList.size(); j++){
+            if(fullList.get(j).getId() == item.getId()){
+                position = j;
+                mCallback.edit(0, position);
+                return;
+            }
         }
-        else {
-            mCallback.edit(1,i);
-        }
-
+        mCallback.edit(1, position);
+        return;
     }
 
     private boolean accepted(ArrayList<String> name, ArrayList<Integer> hours, ArrayList<Integer> id, boolean[] due) {
-        return name != null && hours != null && id != null && due != null && name.size() == hours.size() && hours.size() == id.size() && Array.getLength(due) == id.size();
+        return name != null && hours != null && id != null && due != null && name.size() == hours.size() && hours.size() == id.size(); //&& Array.getLength(due) == id.size();
     }
 
     public ArrayList<Medicine> getMedicines() {

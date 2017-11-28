@@ -26,7 +26,7 @@ import jlvivero.medule.models.Database;
 import jlvivero.medule.models.Medicine;
 import jlvivero.medule.timers.AlarmReceiver;
 
-
+//TODO: check for performance issues once all bugs are solved
 //TODO: design decision, maybe add an option to change the size of the font
 public class MainActivity extends AppCompatActivity  implements MedicineName.OnFormIntroducedListener, MedicineList.ModifyValueListener, MedicineModify.CallbackValueListener, SortBy.SortByListener, FilterBy.FilterByListener{
 
@@ -162,8 +162,7 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 transaction.replace(R.id.fragment_container, form).commit();
                 break;
             case 2://show fragment to modify a medicine
-                Medicine clicked; //medicine that was clicked
-                clicked = list.get(modifyPos);
+                Medicine clicked = list.get(modifyPos); //medicine that was clicked
                 MedicineModify modify = MedicineModify.newInstance(clicked, modifyPos);
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, modify).commit();
@@ -217,7 +216,6 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         else {
             //means the values do not match which means there's a problem
             Log.d("transfer-error", "the medicine does not match the original");
-            //TODO: add an error logging for when state 0 is called
             changeState(0);
         }
     }
@@ -286,9 +284,8 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
         changeState(0);
     }
 
-    //TODO: filter a bug where medicines are still clickable even when filtered
     public void filterListener(int i){
-        Log.d("Dialog", "filterListener: I am here for some reason");
+        //TODO: make this a method or class so that it can be called from MedicineList as well for refresh
         switch (i){
             case 0:
                 for(int j = 0; j < list.size(); j++) {
@@ -297,9 +294,9 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
                 changeState(0);
                 break;
             case 1:
-                Log.d("Dialog", "filterListener: wtf");
                 for(int j = 0; j < list.size(); j++) {
                     if (!list.get(j).isDue()) {
+                        Log.d("filter", list.get(j).getMedName());
                         list.get(j).visible = false;
                     }
                 }

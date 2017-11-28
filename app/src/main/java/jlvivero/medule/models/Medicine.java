@@ -125,9 +125,10 @@ public class Medicine implements Comparable<Medicine>{
     }
     @Override
     public String toString() {
+        /*
         if(!this.visible) {
             return "";
-        }
+        }*/
         StringBuilder builder = new StringBuilder();
         builder.append(this.medName);
         builder.append("\n");
@@ -180,12 +181,14 @@ public class Medicine implements Comparable<Medicine>{
 
     @Ignore
     private int sortByTime(Medicine medicine) {
+        Log.d("sorting", "SortByTime");
+        Log.d("sorting", "medicine1:" + this.medName + "medicine2: " + medicine.medName);
         long time1 = this.get_date();
         long time2 = medicine.get_date();
-        if(time1 > time2){
+        if(time1 < time2){
             return 1;
         }
-        else if(time1 < time2){
+        else if(time1 > time2){
             return -1;
         }
         else{
