@@ -285,21 +285,13 @@ public class MainActivity extends AppCompatActivity  implements MedicineName.OnF
     }
 
     public void filterListener(int i){
-        //TODO: make this a method or class so that it can be called from MedicineList as well for refresh
         switch (i){
             case 0:
-                for(int j = 0; j < list.size(); j++) {
-                    list.get(j).visible = true;
-                }
+                MedicineList.filter = false;
                 changeState(0);
                 break;
             case 1:
-                for(int j = 0; j < list.size(); j++) {
-                    if (!list.get(j).isDue()) {
-                        Log.d("filter", list.get(j).getMedName());
-                        list.get(j).visible = false;
-                    }
-                }
+                MedicineList.filter = true;
                 changeState(0);
                 break;
             default:

@@ -28,7 +28,7 @@ import static android.content.ContentValues.TAG;
 //TODO: text looks very light, maybe have a different color for the medicine list
 public class MedicineList extends Fragment implements ListView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
 
-    //private static int filter;
+    public static boolean filter;
     View view;
     private SwipeRefreshLayout refresh;
     private ArrayList<Medicine> medicines = new ArrayList<>();
@@ -113,11 +113,9 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
                     temp.setDueDate(new Date(dueDate[i]));
                     temp.visible = visible.get(i) == 1;
                     fullList.add(temp);
-                    if(temp.visible){
-                        medicines.add(temp);
-                    }
                 }
             }
+            filterBy();
             adapter.notifyDataSetChanged();
             Log.d("fragments", "i added it");
         }
@@ -140,9 +138,37 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
     @Override
     public void onRefresh(){
         //idk what to add here yet
+        filterBy();
         Collections.sort(medicines, Collections.<Medicine>reverseOrder());
         adapter.notifyDataSetChanged();
         refresh.setRefreshing(false);
+    }
+
+    public void fillFilterList(ArrayList<Medicine> values){
+        medicines.clear();
+        for(Medicine value : values){
+            if(value.visible){
+                medicines.add(value);
+            }
+        }
+    }
+
+    public void filterBy(){
+        if(filter){
+            for(int j = 0; j < fullList.size(); j++) {
+                if (!fullList.get(j).isDue()) {
+                    fullList.get(j).visible = false;
+                }
+                else{
+                    fullList.get(j).visible = true;
+                }
+            }
+            fillFilterList(fullList);
+        }
+        else{
+            medicines.clear();
+            medicines.addAll(fullList);
+        }
     }
 
     @Override
@@ -151,15 +177,24 @@ public class MedicineList extends Fragment implements ListView.OnItemClickListen
         item = adapter.getItem(i);
         //find the itemid in the full list
         int position = 0;
-        //TODO: maybe only do this when a flag about filtering is up
-        for(int j = 0; j < fullList.size(); j++){
-            if(fullList.get(j).getId() == item.getId()){
-                position = j;
-                mCallback.edit(0, position);
-                return;
+        if(filter){
+            for(int j = 0; j < fullList.size(); j++){
+                if(fullList.get(j).getId() == item.getId()){
+                    position = j;
+                    mCallback.edit(0, position);
+                    return;
+                }
+            }
+            mCallback.edit(1, position);
+        }
+        else{
+            if(item != null) {
+                mCallback.edit(0, i);
+            }
+            else{
+                mCallback.edit(1, i);
             }
         }
-        mCallback.edit(1, position);
         return;
     }
 
